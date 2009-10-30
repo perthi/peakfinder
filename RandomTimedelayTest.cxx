@@ -57,14 +57,14 @@ RandomTimedelayTest::TestRandom()
   TH1D *h = new TH1D("test2", "test2", 30000, -90, 90);
   PulseGenerator *p= new  PulseGenerator(); 
 
-
   for(int i=0; i < n ; i++)
     {
       vector<double> tmpAmp;
-      //  p->GeneratePulse(tmpAmp, 100, Tau_t(0.2 ), tw*rndArray[i] );
-      p->GeneratePulse(tmpAmp, NSamples_t(100), Tau_t(2), T0_t( tw*rndArray[i]) );
-
-      double tmmpdiff = MakeInitialTOFGuess(tmpAmp) - tw*rndArray[i]; 
+      
+      //  p->GeneratePulse(tmpAmp, NSamples_t(100),  Tau_t(0.2),   T0_t( tw*rndArray[i]) );
+      p->GeneratePulse(tmpAmp, NSamples_t(100),  Tau_t(0.2) ,   T0_t( tw*rndArray[i]) );
+   
+    double tmmpdiff = MakeInitialTOFGuess(tmpAmp) - tw*rndArray[i]; 
       h->Fill(tmmpdiff);
       
       if(i==2)

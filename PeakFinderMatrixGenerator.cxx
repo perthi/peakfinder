@@ -30,21 +30,46 @@ PeakFinderMatrixGenerator::~PeakFinderMatrixGenerator()
 }
 
 
+// void GeneratePulse( vector<T> &pfAmplitudes, const NSamples_t &N, const Tau_t &tau, const T0_t  &t0)  
+
+
 TMatrixD*  
 PeakFinderMatrixGenerator::GenerateMatrix(const NSamples_t &nSamples,  const TMin_t &tmin  , const  TMax_t &tmax , const NDivisions_t  &ndiv, const Tau_t  &tau)
 {
+  PulseGenerator *p = new PulseGenerator();
+
   fPFMatrix  = new TMatrixD( ndiv.GetValue() ,  nSamples.GetValue());
   //  const double interval =  t0max - t0min;
-  const double epsilon =  (tmax - tmin)/ndiv.GetValue();
- 
-  for(int i=0; i   <   ndiv.GetValue() ; ++i )
-    {
-      
-    }
+  // const double epsilon =  (tmax - tmin)/ndiv.GetValue();
+  double array[nSamples.GetValue()][ndiv.GetValue()];
 
+  // const double t0 =  tmin;
+  const double epsilon =  (tmax - tmin)/ndiv;
+  
+
+  vector<double> amplitudes;
+  
+  //  static double tmpdoublearray[(const int)(nSamples*ndiv)];
+  double tmpdoublearray[(const int)(nSamples*ndiv)];
+
+
+  for(int t=0; t < ndiv; t++ )
+    {
+      p->GeneratePulse(amplitudes, nSamples, tau,  T0_t (tmin + epsilon*t ) );
+      
+      for(int i=0; i < nSamples; i++ )
+	{
+	  tmpdoublearray[ (int)(t*nSamples + i)] =  amplitudes.at(i);
+	}
+    }
+  
+  fPFMatrix->SetMatrixArray( tmpdoublearray );
+  
 }
 
 
+
+//h.SetMatrixArray(data);
 
 
 

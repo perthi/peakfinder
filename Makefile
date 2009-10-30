@@ -25,7 +25,9 @@ SRC=	main.cxx \
 	PulseGenerator.cxx \
 	RandomTimedelayTest.cxx \
 	PeakFinderMatrixGenerator.cxx \
-	DataTypes.cxx	
+	DataTypes.cxx \
+	PeakFinderVectorsGenerator.cxx
+
 
 OBJS=$(subst .cxx,.o, $(SRC))
 

@@ -1,7 +1,6 @@
 #ifndef PULSEGENERATOR_H
 #define PULSEGENERATOR_H
 
-
 /**************************************************************************
  * This file is property of and copyright by the Experimental Nuclear     *
  * Physics Group, Dep. of Physics                                         *
@@ -35,7 +34,7 @@ class  PulseGenerator
   virtual ~PulseGenerator();
   
   template<class T>
-    void GeneratePulse( vector<T> &pfAmplitudes, NSamples_t N, Tau_t tau, T0_t  t0)   
+    void GeneratePulse( vector<T> &pfAmplitudes, const NSamples_t &N, const Tau_t &tau, const T0_t  &t0)   
     {
       pfAmplitudes.clear();
       
@@ -44,6 +43,7 @@ class  PulseGenerator
 	  T tmp = 0;
 	  double t=SampleIndex2us(i); 
 	  double t0tmp = SampleIndex2us( t0.GetValue() );
+	  
 	  
 	  if( (t-t0tmp) > 0 )
 	    {

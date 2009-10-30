@@ -21,28 +21,29 @@
 
 #include <iostream>
 #include <string>
-#include <stdlib.h>
-#include <stdio.h>
 #include <execinfo.h>
-#include <signal.h>
-#include <stdlib.h>
-
 
 using namespace std;
 
-
+//static double cnt =0 ;
 
 //////////Tau
 template <class T>
 class Val_t
 {
  public:
- Val_t(const T &t, const T min, const T max, const string name, const string subscript) :  
+  explicit Val_t(const T &t, const T min, const T max, const string name, const string subscript) :  
   fVal(t),
     fMinValue(min), 
     fMaxValue(max), 
-    fName(name) 
+    fName(name),
+    fSubscript(subscript) 
     {
+    
+      //  cnt ++;
+
+      //   cout << __FILE__<<":"<<__LINE__ <<": Is called a total of "<< cnt << "  times" << endl;
+
       if(t > max || t < min)
 	{
 	  void *array[10];
@@ -76,75 +77,102 @@ class Val_t
   const T  fVal;
   const double fMinValue;
   const double fMaxValue;
+
+ public:
   const string fName;
-  const string subscript;
+  
+ private:
+  const string fSubscript;
+  //  static double cnt;
 };
 
 
-class  Tau_t : public Val_t <double> 
+//static double Val_t<double>::cnt =0 ;
+//static double Val_t<int>::cnt =0 ;
+
+
+class  Tau_t : public Val_t <const double> 
 {
  public:
- Tau_t( const double &t) : Val_t<double>:: Val_t( t, 0.2, 4, "Tau_t", " us" ) {};
+ explicit Tau_t( const double &t) : Val_t<const double>:: Val_t( t, 0.2, 4, "Tau_t", " us" ) 
+    {
+      //   cnt ++;
+      //   cout <<__FILE__<<__LINE__<< ": The construcor of " << fName << " was called a totsl of "<< cnt <<  " Times"  << endl;
+    };
  private:
   Tau_t();
 };
 
 
-class  Amplitude_t : public Val_t<double>
+class  Amplitude_t : public Val_t<const double>
 {
  public:
- Amplitude_t(const  double t = 1) : Val_t<double>::Val_t( t,  0.1, 1023, "Amplitude_t", " ADC counts"    ) {} ;
+  explicit Amplitude_t( const double t = 1) : Val_t<const double>::Val_t( t,  0.1, 1023, "Amplitude_t", " ADC counts"    ) {} ;
  private:
   Amplitude_t();
 };
 
 
 
-class  NSamples_t : public Val_t<int>
+class  NSamples_t : public Val_t<const int>
 {
  public:
- NSamples_t( const int t) : Val_t<int>::Val_t(t, 1 , 1023, "NSamples_t", " N") {};
+  explicit   NSamples_t( const int t) : Val_t<const int>::Val_t(t, 1 , 1023, "NSamples_t", " N") {};
  private:
   NSamples_t();
 };
 
 
-class T0_t : public Val_t<double>
+class T0_t : public Val_t<const double>
 {
  public:
- T0_t( const double t)  : Val_t<double>::Val_t(t, -100, 1023, "T0_t", " Sample indexes") {};
+  explicit T0_t( const double t)  : Val_t<const double>::Val_t(t, -100, 1023, "T0_t", " Sample indexes") {};
  private:
   T0_t();
 };
 
 
-class TMax_t : public Val_t<double>
+class TMax_t : public Val_t<const double>
 {
  public:
- TMax_t( const double t) : Val_t<double>::Val_t(t, -100, 1023, "TMax_t",  " Sample indexes" ) {} ;
+  explicit TMax_t( const double t) : Val_t<const double>::Val_t(t, -100, 1023, "TMax_t",  " Sample indexes" ) {} ;
  private:
   TMax_t();
 };
 
 
-class TMin_t : public Val_t<double>
+class TMin_t : public Val_t<const double>
 {
  public:
- TMin_t( const double t) :Val_t<double>::Val_t( t , -100, 1023, "TMix_t", " Sample indexes"  ) {} ;
+  explicit  TMin_t( const double t) :Val_t<const double>::Val_t( t , -100, 1023, "TMix_t", " Sample indexes"  ) {} ;
  private:
   TMin_t();
 };
 
 
-
-class NDivisions_t : public Val_t<int>
+class NDivisions_t : public Val_t<const int>
 {
  public:
- NDivisions_t( const int t) : Val_t<int>::Val_t(t,  100, 10000, "NDivision_t", " Divisions"   ) {} ;
+  explicit NDivisions_t( const int t) : Val_t<const int>::Val_t(t,  100, 10000, "NDivision_t", " Divisions"   ) {} ;
  private:
   NDivisions_t();
 };
 
+
+//PeakFinderMatrixGenerator::GenerateMatrix( const NSamples_t &nSamples,  const TMin_t &tmin  , const  TMax_t &tmax , const NDivisions_t  &ndiv, const Tau_t  &tau  )
+
+/*
+class PFMatrixParameters
+{
+ public:
+ PFMatrixParameters(const NSamples_t &nSamples,  const TMin_t &tmin  , const  TMax_t &tmax , const NDivisions_t  &ndiv, const Tau_t  &tau):
+  
+ private:
+  PFMatrixParameters();
+  const NSamples_t fNSamples;
+  const TMin_t
+}
+*/
 
 template <class T, class T2>  
   inline  double  operator / ( const T  &lhs, const  Val_t<T2> &rhs ) 
@@ -153,11 +181,20 @@ template <class T, class T2>
 };
 
 
+
 template <class T, class T2>  
 inline double operator  + (  const T &lhs,   const Val_t<T2> &rhs )
 {
   return  (double)lhs +  (double)rhs.GetValue();
 }
+
+
+template <class T>  
+inline double operator  + (  const Val_t<T> &lhs,   const double &rhs )
+{
+  return  (double)lhs.GetValue() +  (double)rhs;
+}
+
 
 template <class T, class T2>  
 bool  operator <  ( const T &lhs, const  Val_t<T2> & rhs) 
@@ -178,6 +215,21 @@ template <class T, class T2>
 {
   return (double)lhs - (double)rhs.GetValue();
 };
+
+
+template <class T, class T2>  
+  inline double operator *  ( const Val_t<T> &lhs, const Val_t<T2> & rhs) 
+{
+  return (double)lhs.GetValue()*(double)rhs.GetValue();
+};
+
+
+template <class T>  
+inline double operator *  (int lhs, const Val_t<T> & rhs) 
+{
+  return (double)lhs*(double)rhs.GetValue();
+};
+
 
   
 inline double operator -  ( const TMax_t &lhs, const TMin_t &rhs) 
